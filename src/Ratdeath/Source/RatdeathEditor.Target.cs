@@ -11,5 +11,6 @@ public class RatdeathEditorTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V2;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_1;
 		ExtraModuleNames.Add("Ratdeath");
+		ExtraModuleNames.Add("InventorySystem");
 	}
 }
