@@ -21,9 +21,9 @@ void UItemBase::SetQuantity(const int32 Quantity)
 	if (Data.Quantity != Quantity)
 	{
 		auto const MaximumStackableSize = Data.ItemData.NumericData.bIsStackable
-			? Data.ItemData.NumericData.MaxStackSize
-			: 1;
-		
+			                                  ? Data.ItemData.NumericData.MaxStackSize
+			                                  : 1;
+
 		Data.Quantity = FMath::Clamp(Quantity, 0, MaximumStackableSize);
 	}
 }

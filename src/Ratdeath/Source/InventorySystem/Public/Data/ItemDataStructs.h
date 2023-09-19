@@ -60,7 +60,7 @@ struct FItemNumericData
 
 	UPROPERTY(EditAnywhere)
 	float Weight;
-	
+
 	UPROPERTY(EditAnywhere)
 	int32 MaxStackSize;
 
