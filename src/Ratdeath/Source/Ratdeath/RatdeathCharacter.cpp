@@ -35,6 +35,11 @@ ARatdeathCharacter::ARatdeathCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
+	BaseEyeHeight = CrouchEyeHeight;
+	
+	Interacting = FInteracting{};
+	Interacting.InteractionCheckDistance = 100.0f;
+	Interacting.InteractionCheckFrequency = 0.1f;
 }
 
 void ARatdeathCharacter::BeginPlay()
@@ -72,6 +77,61 @@ void ARatdeathCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	}
 }
 
+void ARatdeathCharacter::PerformInteractionCheck()
+{
+	InteractionData.LastInteractionDuration = GetWorld()->GetTimeSeconds();
+
+	FVector TraceStart {GetPawnViewLocation()};
+	FVector TraceEnd {TraceStart + (GetViewRotation().Vector() * Interacting.InteractionCheckDistance)};
+
+	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Green, false, 1.0f, 0, 2.0f);
+
+	FCollisionQueryParams QueryParams;
+	QueryParams.AddIgnoredActor(this);
+	FHitResult Hit;
+
+	if (GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
+	{
+		AActor* HitActor = Hit.GetActor();
+		if (HitActor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
+		{
+			const float Distance = (TraceStart - Hit.ImpactPoint).Size();
+
+			if (HitActor != InteractionData.Interactable || Distance > Interacting.InteractionCheckDistance)
+			{
+				FoundInteractable(HitActor);
+			}
+
+			if (HitActor == InteractionData.Interactable)
+			{
+				return;
+			}
+		}
+	}
+
+	NoInteractableFound();
+}
+
+void ARatdeathCharacter::FoundInteractable(AActor* Interactable)
+{
+}
+
+void ARatdeathCharacter::NoInteractableFound()
+{
+}
+
+void ARatdeathCharacter::BeginInteract()
+{
+}
+
+void ARatdeathCharacter::EndInteract()
+{
+}
+
+void ARatdeathCharacter::Interact()
+{
+}
+
 
 void ARatdeathCharacter::Move(const FInputActionValue& Value)
 {
@@ -107,4 +167,14 @@ void ARatdeathCharacter::SetHasRifle(bool bNewHasRifle)
 bool ARatdeathCharacter::GetHasRifle()
 {
 	return bHasRifle;
+}
+
+void ARatdeathCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (GetWorld()->TimeSince(InteractionData.LastInteractionDuration) > Interacting.InteractionCheckFrequency)
+	{
+		PerformInteractionCheck();
+	}
 }

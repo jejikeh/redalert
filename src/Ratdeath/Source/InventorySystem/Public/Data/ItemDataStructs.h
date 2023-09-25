@@ -4,6 +4,8 @@
 #include "Engine/DataTable.h"
 #include "ItemDataStructs.generated.h"
 
+class IInteractionInterface;
+
 UENUM()
 enum class EItemRarity : uint8
 {
@@ -28,6 +30,7 @@ struct FItemStatistics
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere)
 	float DamageValue;
 
@@ -40,6 +43,7 @@ struct FItemTextData
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere)
 	FText Name;
 
@@ -58,6 +62,7 @@ struct FItemNumericData
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere)
 	float Weight;
 
@@ -73,6 +78,7 @@ struct FItemAssetData
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere)
 	UTexture2D* Icon;
 
@@ -87,6 +93,7 @@ struct FItemData : public FTableRowBase
 {
 	GENERATED_BODY()
 
+public:
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	FName Id;
 
@@ -107,4 +114,20 @@ struct FItemData : public FTableRowBase
 
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	FItemAssetData AssetData;
+};
+
+USTRUCT()
+struct FInteracting
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(VisibleAnywhere, Category = "Interaction")
+	TScriptInterface<IInteractionInterface> InteractionInterface;
+
+	float InteractionCheckFrequency;
+
+	double InteractionCheckDistance;
+
+	FTimerHandle InteractionCheckTimerHandle;
 };
