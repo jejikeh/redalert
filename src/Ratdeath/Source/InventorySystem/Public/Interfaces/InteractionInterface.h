@@ -66,19 +66,20 @@ class INVENTORYSYSTEM_API IInteractionInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
-#pragma region Functions
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interacting System | Events")
+	void BeginFocus();
 
-	virtual void BeginFocus();
-	virtual void EndFocus();
-	virtual void BeginInteract();
-	virtual void EndInteract();
-	virtual void Interact();
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interacting System | Events")
+	void EndFocus();
 
-#pragma endregion Functions
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interacting System | Events")
+	void BeginInteract();
 
-#pragma region Properties
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interacting System | Events")
+	void EndInteract();
+
+	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interacting System | Events")
+	void Interact();
 
 	FInteractableData InteractableData;
-
-#pragma endregion Properties
 };

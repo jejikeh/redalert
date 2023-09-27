@@ -5,8 +5,10 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "InputActionValue.h"
+#include "Components/InteractComponent.h"
 #include "Data/ItemDataStructs.h"
 #include "Interfaces/InteractionInterface.h"
+#include "Interfaces/InteractTracing.h"
 #include "RatdeathCharacter.generated.h"
 
 class UInputComponent;
@@ -16,44 +18,18 @@ class UCameraComponent;
 class UAnimMontage;
 class USoundBase;
 
-USTRUCT()
-struct FInteractionData
-{
-	GENERATED_BODY()
-
-public:
-	FInteractionData() : Interactable(nullptr), InteractionDuration(0.0f), LastInteractionDuration(0.0f)
-	{
-	};
-
-	UPROPERTY()
-	AActor* Interactable;
-
-	UPROPERTY()
-	float InteractionDuration;
-
-	UPROPERTY()
-	float LastInteractionDuration;
-};
-
 UCLASS(config=Game)
-class ARatdeathCharacter : public ACharacter
+class ARatdeathCharacter : public ACharacter, public IInteractTracing
 {
 	GENERATED_BODY()
 
 public:
 	ARatdeathCharacter();
 
-#pragma region Fields
-
 	/** Returns Mesh1P subobject **/
 	USkeletalMeshComponent* GetMesh1P() const { return Mesh1P; }
 	/** Returns FirstPersonCameraComponent subobject **/
 	UCameraComponent* GetFirstPersonCameraComponent() const { return FirstPersonCameraComponent; }
-
-#pragma endregion Fields
-
-#pragma region Functions
 
 	/** Setter to set the bool */
 	UFUNCTION(BlueprintCallable, Category = Weapon)
@@ -65,11 +41,11 @@ public:
 
 	virtual void Tick(float DeltaSeconds) override;
 
-#pragma endregion Functions
+	virtual FRotator GetTraceRotation_Implementation() override;
+	
+	virtual FVector GetTraceStartVector_Implementation() override;
 
 protected:
-#pragma region Functions
-
 	virtual void BeginPlay() override;
 	
 	/** Called for movement input */
@@ -81,26 +57,10 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 
-	void PerformInteractionCheck();
-	void FoundInteractable(AActor* Interactable);
-	void NoInteractableFound();
-	void BeginInteract();
-	void EndInteract();
-	void Interact();
-
-protected:
-#pragma endregion Functions
-
-#pragma region Fields
-	FInteracting Interacting;
-
-	FInteractionData InteractionData;
-
-#pragma endregion Fields
+	UPROPERTY(EditAnywhere, Category = "Inventory System")
+	UInteractComponent* InteractComponent;
 
 private:
-#pragma region Fields
-
 	/** Pawn mesh: 1st person view (arms; seen only by self) */
 	UPROPERTY(VisibleDefaultsOnly, Category=Mesh)
 	USkeletalMeshComponent* Mesh1P;
@@ -132,6 +92,4 @@ private:
 	float StandingEyeHeight = 55.0f;
 
 	float CrouchEyeHeight = 25.0f;
-
-#pragma endregion Fields
 };

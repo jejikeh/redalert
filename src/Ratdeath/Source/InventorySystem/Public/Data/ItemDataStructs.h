@@ -115,19 +115,3 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	FItemAssetData AssetData;
 };
-
-USTRUCT()
-struct FInteracting
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(VisibleAnywhere, Category = "Interaction")
-	TScriptInterface<IInteractionInterface> InteractionInterface;
-
-	float InteractionCheckFrequency;
-
-	double InteractionCheckDistance;
-
-	FTimerHandle InteractionCheckTimerHandle;
-};

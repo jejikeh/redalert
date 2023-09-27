@@ -16,10 +16,10 @@ ARatdeathCharacter::ARatdeathCharacter()
 {
 	// Character doesnt have a rifle at start
 	bHasRifle = false;
-	
+
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-		
+
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
@@ -35,11 +35,7 @@ ARatdeathCharacter::ARatdeathCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
-	BaseEyeHeight = CrouchEyeHeight;
-	
-	Interacting = FInteracting{};
-	Interacting.InteractionCheckDistance = 100.0f;
-	Interacting.InteractionCheckFrequency = 0.1f;
+	BaseEyeHeight = StandingEyeHeight;
 }
 
 void ARatdeathCharacter::BeginPlay()
@@ -50,12 +46,12 @@ void ARatdeathCharacter::BeginPlay()
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
 	}
-
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -77,61 +73,15 @@ void ARatdeathCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 	}
 }
 
-void ARatdeathCharacter::PerformInteractionCheck()
+FRotator ARatdeathCharacter::GetTraceRotation_Implementation()
 {
-	InteractionData.LastInteractionDuration = GetWorld()->GetTimeSeconds();
-
-	FVector TraceStart {GetPawnViewLocation()};
-	FVector TraceEnd {TraceStart + (GetViewRotation().Vector() * Interacting.InteractionCheckDistance)};
-
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Green, false, 1.0f, 0, 2.0f);
-
-	FCollisionQueryParams QueryParams;
-	QueryParams.AddIgnoredActor(this);
-	FHitResult Hit;
-
-	if (GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
-	{
-		AActor* HitActor = Hit.GetActor();
-		if (HitActor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
-		{
-			const float Distance = (TraceStart - Hit.ImpactPoint).Size();
-
-			if (HitActor != InteractionData.Interactable || Distance > Interacting.InteractionCheckDistance)
-			{
-				FoundInteractable(HitActor);
-			}
-
-			if (HitActor == InteractionData.Interactable)
-			{
-				return;
-			}
-		}
-	}
-
-	NoInteractableFound();
+	return GetViewRotation();
 }
 
-void ARatdeathCharacter::FoundInteractable(AActor* Interactable)
+FVector ARatdeathCharacter::GetTraceStartVector_Implementation()
 {
+	return GetPawnViewLocation();
 }
-
-void ARatdeathCharacter::NoInteractableFound()
-{
-}
-
-void ARatdeathCharacter::BeginInteract()
-{
-}
-
-void ARatdeathCharacter::EndInteract()
-{
-}
-
-void ARatdeathCharacter::Interact()
-{
-}
-
 
 void ARatdeathCharacter::Move(const FInputActionValue& Value)
 {
@@ -172,9 +122,4 @@ bool ARatdeathCharacter::GetHasRifle()
 void ARatdeathCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
-	if (GetWorld()->TimeSince(InteractionData.LastInteractionDuration) > Interacting.InteractionCheckFrequency)
-	{
-		PerformInteractionCheck();
-	}
 }
