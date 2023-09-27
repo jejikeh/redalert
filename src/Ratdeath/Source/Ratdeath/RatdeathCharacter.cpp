@@ -35,6 +35,8 @@ ARatdeathCharacter::ARatdeathCharacter()
 	//Mesh1P->SetRelativeRotation(FRotator(0.9f, -19.19f, 5.2f));
 	Mesh1P->SetRelativeLocation(FVector(-30.f, 0.f, -150.f));
 
+	InteractComponent = CreateDefaultSubobject<UInteractComponent>(TEXT("InteractComponent"));
+
 	BaseEyeHeight = StandingEyeHeight;
 }
 
@@ -75,7 +77,8 @@ void ARatdeathCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 FRotator ARatdeathCharacter::GetTraceRotation_Implementation()
 {
-	return GetViewRotation();
+	const FRotator Rotation = GetViewRotation();
+	return Rotation;
 }
 
 FVector ARatdeathCharacter::GetTraceStartVector_Implementation()

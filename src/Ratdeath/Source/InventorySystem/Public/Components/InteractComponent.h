@@ -9,6 +9,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "InteractComponent.generated.h"
 
+DECLARE_LOG_CATEGORY_EXTERN(LogInteractComponent, Log, All);
 
 class IInteractionInterface;
 

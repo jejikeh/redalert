@@ -8,31 +8,24 @@ DEFINE_LOG_CATEGORY(LogInteractComponent);
 // Sets default values for this component's properties
 UInteractComponent::UInteractComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = true;
-
-	// ...
 }
 
-
-// Called when the game starts
 void UInteractComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
 	auto Owner = GetOwner();
-	if (UKismetSystemLibrary::DoesImplementInterface(Owner, UInteractionInterface::StaticClass()))
+	if (UKismetSystemLibrary::DoesImplementInterface(Owner, UInteractTracing::StaticClass()))
 	{
 		OwnerInteractTracing = Owner;
 	}
 	else
 	{
-		UE_LOG(LogInteractComponent, Error, TEXT("Owner does not implement IInteractionInterface"));
+		UE_LOG(LogInteractComponent, Error, TEXT("Owner does not implement IInteractTracing"));
 	}
 }
 
-// Called every frame
 void UInteractComponent::TickComponent(float DeltaTime, ELevelTick TickType,
                                        FActorComponentTickFunction* ThisTickFunction)
 {
@@ -67,9 +60,12 @@ AActor* UInteractComponent::FindInteractionActorFromView()
 	}
 
 	InteractionData.LastInteractionDuration = GetWorld()->GetTimeSeconds();
-	FVector TraceStart{OwnerInteractTracing->GetTraceStartVector()};
-	FVector TraceEnd{OwnerInteractTracing->GetTraceRotation().Vector() * InteractionData.InteractionCheckDistance};
-	DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Green, false, 1.0f, 0, 2.0f);
+	FVector TraceStart{IInteractTracing::Execute_GetTraceStartVector(OwnerInteractTracing.GetObject())};
+
+	FRotator TraceRotation = IInteractTracing::Execute_GetTraceRotation(OwnerInteractTracing.GetObject());
+	FVector TraceEnd{TraceStart + TraceRotation.Vector() * InteractionData.InteractionCheckDistance};
+
+	// DrawDebugLine(GetWorld(), TraceStart, TraceEnd, FColor::Green, false, 1.0f, 0, 2.0f);
 
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(GetOwner());
@@ -81,7 +77,7 @@ AActor* UInteractComponent::FindInteractionActorFromView()
 		{
 			const float Distance = (TraceStart - Hit.ImpactPoint).Size();
 
-			if (Distance > InteractionData.InteractionCheckDistance)
+			if (Distance < InteractionData.InteractionCheckDistance)
 			{
 				return HitActor;
 			}
@@ -113,7 +109,7 @@ void UInteractComponent::FocusCurrentInteraction() const
 	// In case we don't have an object but still hold reference
 	if (InteractionData.InteractionObject && IsValid(InteractionData.InteractionObject.GetObject()))
 	{
-		InteractionData.InteractionObject->BeginFocus();
+		IInteractionInterface::Execute_BeginFocus(InteractionData.InteractionObject.GetObject());
 	}
 }
 
@@ -122,7 +118,7 @@ void UInteractComponent::UnFocusCurrentInteraction() const
 	// In case we don't have an object but still hold reference
 	if (InteractionData.InteractionObject && IsValid(InteractionData.InteractionObject.GetObject()))
 	{
-		InteractionData.InteractionObject->EndFocus();
+		IInteractionInterface::Execute_EndFocus(InteractionData.InteractionObject.GetObject());
 	}
 }
 
@@ -144,7 +140,7 @@ void UInteractComponent::StartInteracting()
 		InteractionData.Interactable &&
 		IsValid(InteractionData.InteractionObject.GetObject()))
 	{
-		InteractionData.InteractionObject->BeginInteract();
+		IInteractionInterface::Execute_BeginInteract(InteractionData.InteractionObject.GetObject());
 
 		if (FMath::IsNearlyZero(InteractionData.InteractionObject->InteractableData.InteractionDuration, 0.1f))
 		{
@@ -168,7 +164,7 @@ void UInteractComponent::EndInteracting()
 
 	if (IsValid(InteractionData.InteractionObject.GetObject()))
 	{
-		InteractionData.InteractionObject->EndInteract();
+		IInteractionInterface::Execute_EndInteract(InteractionData.InteractionObject.GetObject());
 	}
 }
 
@@ -178,6 +174,6 @@ void UInteractComponent::HandleInteraction()
 
 	if (IsValid(InteractionData.InteractionObject.GetObject()))
 	{
-		InteractionData.InteractionObject->Interact();
+		IInteractionInterface::Execute_Interact(InteractionData.InteractionObject.GetObject());
 	}
 }
