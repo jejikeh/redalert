@@ -15,7 +15,7 @@ enum class EInteractableType : uint8
 	Container UMETA(DisplayName = "Container"),
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FInteractableData
 {
 	GENERATED_BODY()
@@ -79,7 +79,7 @@ public:
 	void EndInteract();
 
 	UFUNCTION(BlueprintCallable, BlueprintNativeEvent, Category = "Interacting System | Events")
-	void Interact();
+	void Interact(AActor* InteractActor);
 
 	FInteractableData InteractableData;
 };

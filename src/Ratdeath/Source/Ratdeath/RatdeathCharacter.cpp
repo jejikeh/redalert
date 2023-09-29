@@ -72,6 +72,9 @@ void ARatdeathCharacter::SetupPlayerInputComponent(class UInputComponent* Player
 
 		//Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARatdeathCharacter::Look);
+
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Started, this, &ARatdeathCharacter::StartInteract);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Completed, this, &ARatdeathCharacter::EndInteract);
 	}
 }
 
@@ -110,6 +113,16 @@ void ARatdeathCharacter::Look(const FInputActionValue& Value)
 		AddControllerYawInput(LookAxisVector.X);
 		AddControllerPitchInput(LookAxisVector.Y);
 	}
+}
+
+void ARatdeathCharacter::StartInteract()
+{
+	InteractComponent->StartInteracting();
+}
+
+void ARatdeathCharacter::EndInteract()
+{
+	InteractComponent->EndInteracting();
 }
 
 void ARatdeathCharacter::SetHasRifle(bool bNewHasRifle)

@@ -11,6 +11,8 @@ ATestingInteractableActor::ATestingInteractableActor()
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	SetRootComponent(Mesh);
+
+	InteractableOutlineComponent = CreateDefaultSubobject<UInteractableOutlineComponent>(TEXT("InteractOutlineComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -23,35 +25,3 @@ void ATestingInteractableActor::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
-
-void ATestingInteractableActor::BeginFocus_Implementation()
-{
-	if (Mesh)
-	{
-		Mesh->SetRenderCustomDepth(true);
-	}
-}
-
-void ATestingInteractableActor::EndFocus_Implementation()
-{
-	if (Mesh)
-	{
-		Mesh->SetRenderCustomDepth(false);
-	}
-}
-
-void ATestingInteractableActor::BeginInteract_Implementation()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Begin Interact"));
-}
-
-void ATestingInteractableActor::EndInteract_Implementation()
-{
-	UE_LOG(LogTemp, Warning, TEXT("End Interact"));
-}
-
-void ATestingInteractableActor::Interact_Implementation()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Interact"));
-}
-

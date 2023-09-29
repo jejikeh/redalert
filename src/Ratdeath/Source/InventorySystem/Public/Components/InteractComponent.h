@@ -19,7 +19,7 @@ struct FInteractionData
 	GENERATED_BODY()
 
 	UPROPERTY()
-	AActor* Interactable;
+	UActorComponent* Interactable;
 
 	UPROPERTY()
 	float InteractionDuration;
@@ -38,12 +38,12 @@ struct FInteractionData
 
 	FTimerHandle InteractionCheckTimerHandle;
 
-	void SetInteractionObject(AActor* InteractableObject)
+	void SetInteractionObject(UActorComponent* InteractableComponent)
 	{
-		Interactable = InteractableObject;
-		if (UKismetSystemLibrary::DoesImplementInterface(InteractableObject, UInteractionInterface::StaticClass()))
+		Interactable = InteractableComponent;
+		if (UKismetSystemLibrary::DoesImplementInterface(InteractableComponent, UInteractionInterface::StaticClass()))
 		{
-			InteractionObject = InteractableObject;
+			InteractionObject = InteractableComponent;
 		}
 	}
 
@@ -75,22 +75,22 @@ public:
 	UPROPERTY()
 	TScriptInterface<IInteractTracing> OwnerInteractTracing;
 
+	void StartInteracting();
+
+	void EndInteracting();
+
 protected:
 	virtual void BeginPlay() override;
 
-	AActor* FindInteractionActorFromView();
+	UActorComponent* FindInteractionActorWithInteractionComponentFromView();
 	
-	void FillInteractableData(AActor* Interactable);
+	void FillInteractableData(UActorComponent* Interactable);
 	
 	void FocusCurrentInteraction() const;
 
 	void UnFocusCurrentInteraction() const;
 	
 	void ClearInteractableData();
-	
-	void StartInteracting();
-	
-	void EndInteracting();
 	
 	void HandleInteraction();
 };

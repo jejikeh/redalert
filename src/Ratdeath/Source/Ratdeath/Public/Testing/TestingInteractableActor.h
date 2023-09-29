@@ -3,12 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/InteractableOutlineComponent.h"
 #include "GameFramework/Actor.h"
-#include "Interfaces/InteractionInterface.h"
 #include "TestingInteractableActor.generated.h"
 
 UCLASS()
-class RATDEATH_API ATestingInteractableActor : public AActor, public IInteractionInterface
+class RATDEATH_API ATestingInteractableActor : public AActor
 {
 	GENERATED_BODY()
 	
@@ -22,18 +22,9 @@ public:
 protected:
 	UPROPERTY(EditAnywhere, Category = "Testing")
 	UStaticMeshComponent* Mesh;
-	
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
-public:
-	virtual void BeginFocus_Implementation() override;
+	UPROPERTY(EditAnywhere, Category = "Inventory System")
+	UInteractableOutlineComponent* InteractableOutlineComponent;
 	
-	virtual void BeginInteract_Implementation() override;
-	
-	virtual void EndFocus_Implementation() override;
-	
-	virtual void EndInteract_Implementation() override;
-	
-	virtual void Interact_Implementation() override;
+	virtual void BeginPlay() override;
 };

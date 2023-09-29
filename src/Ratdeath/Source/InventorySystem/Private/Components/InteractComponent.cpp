@@ -26,33 +26,32 @@ void UInteractComponent::BeginPlay()
 	}
 }
 
-void UInteractComponent::TickComponent(float DeltaTime, ELevelTick TickType,
-                                       FActorComponentTickFunction* ThisTickFunction)
+void UInteractComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
 	if (GetWorld()->TimeSince(InteractionData.LastInteractionDuration) > InteractionData.InteractionCheckFrequency)
 	{
-		const auto Interactable = FindInteractionActorFromView();
-		if (!Interactable)
+		const auto InteractableComponent = FindInteractionActorWithInteractionComponentFromView();
+		if (!InteractableComponent)
 		{
 			ClearInteractableData();
 		}
 		else
 		{
-			if (InteractionData.Interactable && Interactable != InteractionData.Interactable)
+			if (InteractionData.Interactable && InteractableComponent != InteractionData.Interactable)
 			{
 				UnFocusCurrentInteraction();
 			}
 			
-			FillInteractableData(Interactable);
+			FillInteractableData(InteractableComponent);
 			FocusCurrentInteraction();
-			StartInteracting();
+			// StartInteracting();
 		}
 	}
 }
 
-AActor* UInteractComponent::FindInteractionActorFromView()
+UActorComponent* UInteractComponent::FindInteractionActorWithInteractionComponentFromView()
 {
 	if (!OwnerInteractTracing)
 	{
@@ -70,24 +69,29 @@ AActor* UInteractComponent::FindInteractionActorFromView()
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(GetOwner());
 
+	// NOTE(jejikeh): Replace with Collision Check Event?
 	if (FHitResult Hit; GetWorld()->LineTraceSingleByChannel(Hit, TraceStart, TraceEnd, ECC_Visibility, QueryParams))
 	{
 		AActor* HitActor = Hit.GetActor();
-		if (HitActor->GetClass()->ImplementsInterface(UInteractionInterface::StaticClass()))
-		{
-			const float Distance = (TraceStart - Hit.ImpactPoint).Size();
 
-			if (Distance < InteractionData.InteractionCheckDistance)
-			{
-				return HitActor;
-			}
+		// NOTE(jejikeh): is faster to cast actor to Interface?
+		auto InteractionComponents = HitActor->GetComponentsByInterface(UInteractionInterface::StaticClass());
+
+		if (InteractionComponents.IsEmpty())
+		{
+			return nullptr;
+		}
+		
+		if (auto InteractionComponent = InteractionComponents.Last())
+		{
+			return InteractionComponent;
 		}
 	}
 
 	return nullptr;
 }
 
-void UInteractComponent::FillInteractableData(AActor* Interactable)
+void UInteractComponent::FillInteractableData(UActorComponent* Interactable)
 {
 	if (IsInteracting())
 	{
@@ -174,6 +178,6 @@ void UInteractComponent::HandleInteraction()
 
 	if (IsValid(InteractionData.InteractionObject.GetObject()))
 	{
-		IInteractionInterface::Execute_Interact(InteractionData.InteractionObject.GetObject());
+		IInteractionInterface::Execute_Interact(InteractionData.InteractionObject.GetObject(), GetOwner());
 	}
 }

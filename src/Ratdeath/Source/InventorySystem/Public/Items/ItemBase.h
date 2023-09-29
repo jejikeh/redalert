@@ -28,14 +28,8 @@ class INVENTORYSYSTEM_API UItemBase : public UObject
 	GENERATED_BODY()
 
 public:
-#pragma region Properties
-
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	FItemBaseData Data;
-
-#pragma endregion Properites
-
-#pragma region Functions
 
 	UItemBase();
 
@@ -65,16 +59,10 @@ public:
 	UFUNCTION(Category = "Inventory System | Item")
 	virtual void Use(ACharacter* Character);
 
-#pragma endregion Functions
-
 protected:
-#pragma region Function
-
 	// NOTE: this is for [TArray::Search] overload implementation
 	bool operator==(const FName& OtherId) const
 	{
 		return Data.ItemData.Id == OtherId;
 	}
-
-#pragma endregion Function
 };
