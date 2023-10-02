@@ -11,6 +11,8 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(LogInteractComponent, Log, All);
 
+class UInteractionWidget;
+class AInventorySystemHUD;
 class IInteractionInterface;
 
 USTRUCT(BlueprintType)
@@ -75,6 +77,9 @@ public:
 	UPROPERTY()
 	TScriptInterface<IInteractTracing> OwnerInteractTracing;
 
+	UPROPERTY(EditDefaultsOnly, Category = "Widgets")
+	TSubclassOf<UInteractionWidget> InteractionWidgetClass;
+
 	void StartInteracting();
 
 	void EndInteracting();
@@ -93,4 +98,7 @@ protected:
 	void ClearInteractableData();
 	
 	void HandleInteraction();
+
+	UPROPERTY()
+	AInventorySystemHUD* InventorySystemHUD;
 };

@@ -3,6 +3,9 @@
 
 #include "Testing/TestingInteractableActor.h"
 
+#include "Components/InteractableComponent.h"
+#include "Components/InteractableOutlineComponent.h"
+
 // Sets default values
 ATestingInteractableActor::ATestingInteractableActor()
 {
@@ -13,12 +16,26 @@ ATestingInteractableActor::ATestingInteractableActor()
 	SetRootComponent(Mesh);
 
 	InteractableOutlineComponent = CreateDefaultSubobject<UInteractableOutlineComponent>(TEXT("InteractOutlineComponent"));
+	InteractableComponent = CreateDefaultSubobject<UInteractableComponent>(TEXT("InteractableComponent"));
 }
 
 // Called when the game starts or when spawned
 void ATestingInteractableActor::BeginPlay()
 {
 	Super::BeginPlay();
+
+	InteractableComponent->BeginFocus.AddDynamic(this, &ATestingInteractableActor::TurnOnOutline);
+	InteractableComponent->EndFocus.AddDynamic(this, &ATestingInteractableActor::TurnOffOutline);
+}
+
+void ATestingInteractableActor::TurnOnOutline()
+{
+	InteractableOutlineComponent->SetOutline(true);
+}
+
+void ATestingInteractableActor::TurnOffOutline()
+{
+	InteractableOutlineComponent->SetOutline(false);
 }
 
 void ATestingInteractableActor::Tick(float DeltaTime)

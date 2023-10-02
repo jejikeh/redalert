@@ -3,6 +3,9 @@
 
 #include "Components/InteractComponent.h"
 
+#include "UI/InteractionWidget.h"
+#include "UI/InventorySystemHUD.h"
+
 DEFINE_LOG_CATEGORY(LogInteractComponent);
 
 // Sets default values for this component's properties
@@ -19,6 +22,7 @@ void UInteractComponent::BeginPlay()
 	if (UKismetSystemLibrary::DoesImplementInterface(Owner, UInteractTracing::StaticClass()))
 	{
 		OwnerInteractTracing = Owner;
+		InventorySystemHUD = Cast<AInventorySystemHUD>(GetWorld()->GetFirstPlayerController()->GetHUD());
 	}
 	else
 	{
@@ -26,7 +30,8 @@ void UInteractComponent::BeginPlay()
 	}
 }
 
-void UInteractComponent::TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction)
+void UInteractComponent::TickComponent(float DeltaTime, ELevelTick TickType,
+                                       FActorComponentTickFunction* ThisTickFunction)
 {
 	Super::TickComponent(DeltaTime, TickType, ThisTickFunction);
 
@@ -43,7 +48,7 @@ void UInteractComponent::TickComponent(float DeltaTime, ELevelTick TickType, FAc
 			{
 				UnFocusCurrentInteraction();
 			}
-			
+
 			FillInteractableData(InteractableComponent);
 			FocusCurrentInteraction();
 			// StartInteracting();
@@ -103,7 +108,7 @@ void UInteractComponent::FillInteractableData(UActorComponent* Interactable)
 	{
 		return;
 	}
-	
+
 	InteractionData.SetInteractionObject(Interactable);
 	InteractionData.LastInteractionDuration = GetWorld()->GetTimeSeconds();
 }
@@ -114,6 +119,7 @@ void UInteractComponent::FocusCurrentInteraction() const
 	if (InteractionData.InteractionObject && IsValid(InteractionData.InteractionObject.GetObject()))
 	{
 		IInteractionInterface::Execute_BeginFocus(InteractionData.InteractionObject.GetObject());
+		InventorySystemHUD->UpdateInteractionWidget(&InteractionData.InteractionObject->InteractableData);
 	}
 }
 
@@ -123,6 +129,7 @@ void UInteractComponent::UnFocusCurrentInteraction() const
 	if (InteractionData.InteractionObject && IsValid(InteractionData.InteractionObject.GetObject()))
 	{
 		IInteractionInterface::Execute_EndFocus(InteractionData.InteractionObject.GetObject());
+		InventorySystemHUD->UpdateInteractionWidget(nullptr);
 	}
 }
 

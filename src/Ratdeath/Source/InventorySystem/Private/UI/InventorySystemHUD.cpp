@@ -34,7 +34,7 @@ void AInventorySystemHUD::BeginPlay()
 
 void AInventorySystemHUD::SetWidgetVisibility(const TSubclassOf<UUserWidget> WidgetClass, const ESlateVisibility Visibility) const
 {
-	if (MainPanelHolderWidgetClass == WidgetClass && MainPanelHolderWidget)
+	if (WidgetClass == MainPanelHolderWidgetClass && MainPanelHolderWidget)
 	{
 		MainPanelHolderWidget->SetVisibility(Visibility);
 		return;
@@ -64,9 +64,9 @@ ESlateVisibility AInventorySystemHUD::GetWidgetVisibility(const TSubclassOf<UUse
 	return {};
 }
 
-void AInventorySystemHUD::UpdateInteractionWidget(const FInteractableData& InteractableData)
+void AInventorySystemHUD::UpdateInteractionWidget(const FInteractableData* InteractableData)
 {
-	if (InteractionWidget)
+	if (InteractionWidget && InteractableData)
 	{
 		if (InteractionWidget->GetVisibility() == ESlateVisibility::Collapsed)
 		{
@@ -74,6 +74,9 @@ void AInventorySystemHUD::UpdateInteractionWidget(const FInteractableData& Inter
 		}
 
 		InteractionWidget->UpdateInteractionData(InteractableData);
-		
+	}
+	else
+	{
+		SetWidgetVisibility(InteractionWidgetClass, ESlateVisibility::Collapsed);
 	}
 }

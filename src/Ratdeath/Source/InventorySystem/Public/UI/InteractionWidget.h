@@ -24,7 +24,7 @@ public:
 	UPROPERTY(VisibleAnywhere, Category = "Inventory System")
 	UInteractComponent* OwnerPlayerInteractComponent;
 
-	void UpdateInteractionData(const FInteractableData& InteractableData) const;
+	void UpdateInteractionData(const FInteractableData* InteractableData) const;
 
 protected:
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = "Inventory System | Interaction Data")

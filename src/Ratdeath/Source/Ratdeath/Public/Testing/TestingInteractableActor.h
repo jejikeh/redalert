@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "Components/InteractableOutlineComponent.h"
 #include "GameFramework/Actor.h"
 #include "TestingInteractableActor.generated.h"
+
+class UInteractableOutlineComponent;
+class UInteractableComponent;
 
 UCLASS()
 class RATDEATH_API ATestingInteractableActor : public AActor
@@ -26,5 +28,15 @@ protected:
 	UPROPERTY(EditAnywhere, Category = "Inventory System")
 	UInteractableOutlineComponent* InteractableOutlineComponent;
 	
+	UPROPERTY(EditAnywhere, Category = "Inventory System")
+	UInteractableComponent* InteractableComponent;
+	
 	virtual void BeginPlay() override;
+
+private:
+	UFUNCTION()
+	void TurnOnOutline();
+
+	UFUNCTION()
+	void TurnOffOutline();
 };

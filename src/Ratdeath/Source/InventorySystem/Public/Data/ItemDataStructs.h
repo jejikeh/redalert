@@ -21,7 +21,6 @@ enum class EItemType : uint8
 	Weapon UMETA(DisplayName = "Weapon"),
 	Armor UMETA(DisplayName = "Armor"),
 	Misc UMETA(DisplayName = "Misc"),
-	Quest UMETA(DisplayName = "Quest"),
 	Heal UMETA(DisplayName = "Heal"),
 };
 
@@ -55,22 +54,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	FText UseText;
-};
-
-USTRUCT()
-struct FItemNumericData
-{
-	GENERATED_BODY()
-
-public:
-	UPROPERTY(EditAnywhere)
-	float Weight;
-
-	UPROPERTY(EditAnywhere)
-	int32 MaxStackSize;
-
-	UPROPERTY(EditAnywhere)
-	bool bIsStackable;
 };
 
 USTRUCT()
@@ -108,9 +91,6 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	FItemTextData TextData;
-
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	FItemNumericData NumericData;
 
 	UPROPERTY(EditAnywhere, Category = "Item Data")
 	FItemAssetData AssetData;

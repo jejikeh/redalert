@@ -12,8 +12,7 @@ struct FItemBaseData
 {
 	GENERATED_BODY()
 
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	FItemData ItemData;
+	FItemData* ItemData;
 
 	UPROPERTY(VisibleAnywhere, Category = "Item Data", meta=(UIMin=1, UIMax=100))
 	int32 Quantity;
@@ -28,34 +27,12 @@ class INVENTORYSYSTEM_API UItemBase : public UObject
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(EditAnywhere, Category = "Item Data")
-	FItemBaseData Data;
+	FItemBaseData* Data;
 
 	UItemBase();
 
 	UItemBase* Copy() const;
-
-	UFUNCTION(Category = "Inventory System | Item")
-	FORCEINLINE float GetItemStackWeight() const
-	{
-		return Data.ItemData.NumericData.Weight * Data.Quantity;
-	};
-
-	UFUNCTION(Category = "Inventory System | Item")
-	FORCEINLINE float GetItemWeight() const
-	{
-		return Data.ItemData.NumericData.Weight;
-	}
-
-	UFUNCTION(Category = "Inventory System | Item")
-	FORCEINLINE bool IsFullStack() const
-	{
-		return Data.Quantity >= Data.ItemData.NumericData.MaxStackSize;
-	}
-
-	UFUNCTION(Category = "Inventory System | Item")
-	void SetQuantity(const int32 Quantity);
-
+	
 	UFUNCTION(Category = "Inventory System | Item")
 	virtual void Use(ACharacter* Character);
 
@@ -63,6 +40,6 @@ protected:
 	// NOTE: this is for [TArray::Search] overload implementation
 	bool operator==(const FName& OtherId) const
 	{
-		return Data.ItemData.Id == OtherId;
+		return Data->ItemData->Id == OtherId;
 	}
 };

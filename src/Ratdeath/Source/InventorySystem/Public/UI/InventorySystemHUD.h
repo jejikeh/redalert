@@ -38,8 +38,7 @@ public:
 	UFUNCTION(BlueprintCallable, meta = (ToolTip="Use only on those classes that are presented in HUD. Also this does not work with multiple widgets of the same class."))
 	ESlateVisibility GetWidgetVisibility(TSubclassOf<UUserWidget> WidgetClass) const;
 	
-	UFUNCTION(BlueprintCallable)
-	void UpdateInteractionWidget(const FInteractableData& InteractableData);
+	void UpdateInteractionWidget(const FInteractableData* InteractableData);
 
 protected:
 	UPROPERTY()

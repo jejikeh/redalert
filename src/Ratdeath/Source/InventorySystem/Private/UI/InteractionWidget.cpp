@@ -24,21 +24,20 @@ void UInteractionWidget::NativeConstruct()
 	CurrentInteractionDuration = 0.0f;
 }
 
-void UInteractionWidget::UpdateInteractionData(const FInteractableData& InteractableData) const
+void UInteractionWidget::UpdateInteractionData(const FInteractableData* InteractableData) const
 {
-	switch (InteractableData.InteractableType)
+	switch (InteractableData->InteractableType)
 	{
 	case EInteractableType::Pickup:
-		ActionText->SetText(FText::FromString("Press"));
 		InteractionProgressBar->SetVisibility(ESlateVisibility::Collapsed);
-
-		if (InteractableData.Quantity < 2)
+		
+		if (InteractableData->Quantity < 2)
 		{
 			QuantityText->SetVisibility(ESlateVisibility::Collapsed);
 		}
 		else
 		{
-			QuantityText->SetText(FText::Format(FText::FromString("x{0}"), InteractableData.Quantity));
+			QuantityText->SetText(FText::Format(FText::FromString("[ {0} ]"), InteractableData->Quantity));
 			QuantityText->SetVisibility(ESlateVisibility::Visible);
 		}
 
@@ -51,6 +50,10 @@ void UInteractionWidget::UpdateInteractionData(const FInteractableData& Interact
 		break;
 	default: ;
 	}
+
+	ActionText->SetText(FText::Format(FText::FromString("{0}"), InteractableData->Action));
+	DescriptionText->SetText(FText::Format(FText::FromString("[ {0} ]"), InteractableData->Description));
+	NameText->SetText(FText::Format(FText::FromString("- {0} -"), InteractableData->Name));
 }
 
 float UInteractionWidget::UpdateInteractionProgress()
