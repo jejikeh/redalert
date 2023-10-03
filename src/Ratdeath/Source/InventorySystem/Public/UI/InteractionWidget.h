@@ -34,14 +34,11 @@ protected:
 	UTextBlock* DescriptionText;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = "Inventory System | Interaction Data")
-	UTextBlock* QuantityText;
-
-	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = "Inventory System | Interaction Data")
 	UTextBlock* ActionText;
 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = "Inventory System | Interaction Data")
 	UProgressBar* InteractionProgressBar;
-
+ 
 	UPROPERTY(VisibleAnywhere, meta = (BindWidget), Category = "Inventory System | Interaction Data")
 	float CurrentInteractionDuration;
 

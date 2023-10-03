@@ -26,7 +26,6 @@ public:
 		Name(FText::GetEmpty()),
 		Action(FText::GetEmpty()),
 		Description(FText::GetEmpty()),
-		Quantity(0),
 		InteractionDuration(0.0f)
 	{
 	};
@@ -42,9 +41,6 @@ public:
 
 	UPROPERTY(EditInstanceOnly)
 	FText Description;
-
-	UPROPERTY(EditInstanceOnly)
-	int32 Quantity;
 
 	UPROPERTY(EditInstanceOnly)
 	float InteractionDuration;

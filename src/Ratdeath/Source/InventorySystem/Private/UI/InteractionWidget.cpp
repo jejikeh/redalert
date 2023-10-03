@@ -30,17 +30,6 @@ void UInteractionWidget::UpdateInteractionData(const FInteractableData* Interact
 	{
 	case EInteractableType::Pickup:
 		InteractionProgressBar->SetVisibility(ESlateVisibility::Collapsed);
-		
-		if (InteractableData->Quantity < 2)
-		{
-			QuantityText->SetVisibility(ESlateVisibility::Collapsed);
-		}
-		else
-		{
-			QuantityText->SetText(FText::Format(FText::FromString("[ {0} ]"), InteractableData->Quantity));
-			QuantityText->SetVisibility(ESlateVisibility::Visible);
-		}
-
 		break;
 	case EInteractableType::Interact:
 		break;
